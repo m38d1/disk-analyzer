@@ -951,9 +951,23 @@ $("#exportBtn").onclick=()=>{
 };
 
 /* ---------- init ---------- */
+function faDate(iso){
+  const d=new Date(iso);
+  const cal=new Intl.DateTimeFormat("fa-IR",{dateStyle:"full",timeStyle:"medium"});
+  return cal.format(d);
+}
+function agoFa(iso){
+  const mins=Math.max(0,Math.round((Date.now()-new Date(iso).getTime())/60000));
+  if(mins<1)return"همین حالا";
+  if(mins<60)return mins+" دقیقه پیش";
+  const h=Math.floor(mins/60);
+  if(h<24)return h+" ساعت پیش";
+  return Math.floor(h/24)+" روز پیش";
+}
 function renderMeta(){
-  $("#genTime").textContent=new Date(SCAN.generatedAt).toLocaleString("fa-IR");
-  $("#footer").innerHTML=`اسکن: ${new Date(SCAN.generatedAt).toLocaleString("fa-IR")} — ${fmtInt(SCAN.stats.files)} فایل، ${fmtInt(SCAN.stats.dirs)} پوشه، ${SCAN.stats.seconds} ثانیه. `+
+  const stamp=faDate(SCAN.generatedAt);
+  $("#genTime").textContent=`${stamp} (${agoFa(SCAN.generatedAt)})`;
+  $("#footer").innerHTML=`اسکن: ${stamp} — ${agoFa(SCAN.generatedAt)} — ${fmtInt(SCAN.stats.files)} فایل، ${fmtInt(SCAN.stats.dirs)} پوشه، ${SCAN.stats.seconds} ثانیه. `+
     `اندازه‌ها بر اساس بلوک‌های اشغال‌شده روی دیسک (مانند du) و هاردلینک‌ها یک‌بار شمرده شده‌اند؛ ${SCAN.stats.errors} مورد به‌خاطر مجوز سیستم رد شد. `+
     `اسکن فقط خواندنی بود و همه‌چیز محلی پردازش می‌شود. این نسخه دادهٔ نمونه دارد؛ نسخهٔ محلی با یک کلیک دیسک واقعی را دوباره اسکن می‌کند.`;
 }
